@@ -81,28 +81,13 @@ object BettingService {
      */
     fun evaluateBonus(matches: List<Match>): Int {
         // TODO("Implement bonus point evaluation")
-        /**
-         * return the total bonus score across all stored bets
-         * for each bet the bonus score is determined (3 points, 1 point, and 0 point)
-         * step 1: loop through the stored bets (handle null)
-         * step 2: give 3 points for that specific bet
-                - if the stored bet has both predicted scores set (for home and away)
-            (check the place bet method)
-                - and match exactly with the actual outcome (check for match data set)
-         * step 3: give 1 point
-                - if the predicted outcome matches the actual outcome
-            (check the place bet method, placed bets, and matches data set (for the actual outcome))
-         * step 4: give 0 point
-                - if the predicted outcome doesn't match the actual outcome
-                - or the match has not been played
-         * step 5: return the total bonus score across all stored bets
-        */
         var totalBonus = 0
 
         for (match in matches) {
             val bet = bets[match.matchId]
             val homeScore = match.homeScore ?: continue
             val awayScore = match.awayScore ?: continue
+
             if (bet != null) {
                 if (
                     bet.predictedHomeScore != null &&
@@ -116,7 +101,7 @@ object BettingService {
                 }
             }
         }
-
+        println(totalBonus)
         return totalBonus
     }
 
@@ -124,7 +109,7 @@ object BettingService {
      * Remove the bet for [matchId]. Does nothing if no bet exists for that match.
      */
     fun removeBet(matchId: Int) {
-        TODO("Implement removing a single bet by matchId")
+        // TODO("Implement removing a single bet by matchId")
     }
 
     /**
