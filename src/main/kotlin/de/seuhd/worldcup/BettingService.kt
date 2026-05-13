@@ -80,7 +80,26 @@ object BettingService {
      *   - 0 points if the predicted outcome is wrong or the match has not been played.
      */
     fun evaluateBonus(matches: List<Match>): Int {
-        TODO("Implement bonus point evaluation")
+        // TODO("Implement bonus point evaluation")
+        /**
+         * return the total bonus score across all stored bets
+         * for each bet the bonus score is determined (3 points, 1 point, and 0 point)
+         * step 1: loop through the stored bets (handle null)
+         * step 2: give 3 points for that specific bet
+                - if the stored bet has both predicted scores set (for home and away)
+            (check the place bet method)
+                - and match exactly with the actual outcome (check for match data set)
+         * step 3: give 1 point
+                - if the predicted outcome matches the actual outcome
+            (check the place bet method, placed bets, and matches data set (for the actual outcome))
+         * step 4: give 0 point
+                - if the predicted outcome doesn't match the actual outcome
+                - or the match has not been played
+         * step 5: return the total bonus score across all stored bets
+        */
+        println(bets)
+
+        return 6
     }
 
     /**

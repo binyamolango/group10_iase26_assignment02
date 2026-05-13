@@ -85,10 +85,27 @@ private fun placeBets(allGroups: List<Group>, teamsById: Map<String, Team>) {
         val away = teamsById.nameOf(match.awayTeam)
         println("\n$home vs $away on ${match.date}")
         val code = Console.readInt(
-            "Your prediction (1 = Home win, 2 = Away win, 0 = Draw): ",
-            setOf(0, 1, 2)
+            "Your prediction (0 = Draw, 1 = Home win, 2 = Away win, 3 = Predict Home and Away Score): ",
+            setOf(0, 1, 2, 3)
         )
-        BettingService.placeBet(Bet(matchId = match.matchId, prediction = Prediction.fromCode(code)))
+
+        val bet = if (code == 3) {
+            val homeScore = Console.readInt("Predict Home Score: ")
+            val awayScore = Console.readInt("Predict Away Score: ")
+
+            Bet(
+                matchId = match.matchId,
+                prediction = Prediction.outcomeOf(homeScore, awayScore),
+                predictedHomeScore = homeScore,
+                predictedAwayScore = awayScore
+            )
+        } else {
+            Bet(
+                matchId = match.matchId,
+                prediction = Prediction.fromCode(code)
+            )
+        }
+        BettingService.placeBet(bet)
     }
     println("\nAll bets for ${group.name} stored.")
     Console.waitForEnter()
@@ -102,6 +119,8 @@ private fun showBettingScore(allGroups: List<Group>) {
         "You have ${result.correct} correct prediction(s) and ${result.incorrect} incorrect, " +
             "out of ${result.evaluated} evaluated match(es)."
     )
+
+    BettingService.evaluateBonus(allMatches)
     Console.waitForEnter()
 }
 
