@@ -97,9 +97,27 @@ object BettingService {
                 - or the match has not been played
          * step 5: return the total bonus score across all stored bets
         */
-        println(bets)
+        var totalBonus = 0
 
-        return 6
+        for (match in matches) {
+            val bet = bets[match.matchId]
+            val homeScore = match.homeScore ?: continue
+            val awayScore = match.awayScore ?: continue
+            if (bet != null) {
+                if (
+                    bet.predictedHomeScore != null &&
+                    bet.predictedAwayScore != null &&
+                    bet.predictedHomeScore == homeScore &&
+                    bet.predictedAwayScore == awayScore
+                ) {
+                    totalBonus += 3
+                } else if (bet.prediction == Prediction.outcomeOf(homeScore, awayScore)) {
+                    totalBonus += 1
+                }
+            }
+        }
+
+        return totalBonus
     }
 
     /**
