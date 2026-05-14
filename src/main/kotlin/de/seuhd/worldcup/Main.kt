@@ -115,26 +115,31 @@ private fun placeBets(allGroups: List<Group>, teamsById: Map<String, Team>) {
     Console.waitForEnter()
 }
 
-private fun removeBets(allGroups: List<Group>) {
-    println("\n From which group do you want to remove the bet? Enter the group name (eg. Group A): ")
-
-    val group = chooseGroup(allGroups) ?: return
-    val matches = group.matches
+private fun showBets(matches: List<Match>) {
     var hasBet = false
 
-    for (match in matches) {
+    matches.forEach { match ->
         val bet = BettingService.showBet(match.matchId)
 
         if (bet != null) {
-            println(bet)
+            println("${match.homeTeam} vs ${match.awayTeam} = $bet")
             hasBet = true
         }
     }
 
     if (!hasBet) {
-        println("No bets found in ${group.name}!")
+        println("No bets found!!")
         return
     }
+}
+
+private fun removeBets(allGroups: List<Group>) {
+    println("\n From which group do you want to remove the bet? Enter the group name (eg. Group A): ")
+
+    val group = chooseGroup(allGroups = allGroups) ?: return
+    val matches: List<Match> = group.matches
+
+    showBets(matches)
 
     println("\n Which bet do you want to remove from ${group.name}? Enter the matchId: ")
 
@@ -145,22 +150,11 @@ private fun removeBets(allGroups: List<Group>) {
 
 private fun changeBets(allGroups: List<Group>) {
     println("\n From which group do you want to change the bet? Enter the group name (eg. Group A): ")
+
     val group = chooseGroup(allGroups) ?: return
     val matches = group.matches
-    var hasBet = false
 
-    for (match in matches) {
-        val bet = BettingService.showBet(match.matchId)
-        if (bet != null) {
-            println(bet)
-            hasBet = true
-        }
-    }
-
-    if (!hasBet) {
-        println("No bets found in ${group.name}!")
-        return
-    }
+    showBets(matches)
 
     println("\n Which bet do you want to change from ${group.name}? Enter the matchId: ")
 
