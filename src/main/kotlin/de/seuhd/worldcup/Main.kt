@@ -159,7 +159,7 @@ private fun changeBets(allGroups: List<Group>) {
     println("\n Which bet do you want to change from ${group.name}? Enter the matchId: ")
 
     val matchId = Console.readInt("Match ID: ")
-    val bet = BettingService.showBet(matchId)
+    val bet = BettingService.showBet(matchId) ?: throw IllegalArgumentException("No bet found for match Id ${matchId}!")
     BettingService.changeBet(bet)
     Console.waitForEnter()
 }

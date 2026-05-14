@@ -105,7 +105,7 @@ object BettingService {
         return totalBonus
     }
 
-    // show all the bets in a specific group for the user to perform the removal
+    // show the bet in a specific group for the specific matchid so that the user can change or remove a bet
     fun showBet(matchId: Int): Bet? {
         if (bets != null) {
             val bet = bets[matchId]
@@ -131,10 +131,33 @@ object BettingService {
      * Change an existing bet. Only updates the bet if a bet for the same matchId already
      * exists; throws [IllegalArgumentException] if no bet is found for that match.
      */
-    fun changeBet(bet: Bet?) {
+    fun changeBet(bet: Bet) {
         // TODO("Implement changing an existing bet")
+        println("You are about to change the bet for the selected match!")
+        val code = Console.readInt(
+            "Your prediction (0 = Draw, 1 = Home win, 2 = Away win, 3 = Predict Home and Away Score): ",
+            setOf(0, 1, 2, 3)
+        )
+        val newBet = if (code == 3) {
+            val homeScore = Console.readInt("Predict Home Score: ")
+            val awayScore = Console.readInt("Predict Away Score: ")
 
-        println("\nThe bet for match Id ${bet?.matchId} is changed. Returning to the main menu...")
+            Bet(
+                matchId = bet.matchId,
+                prediction = Prediction.outcomeOf(homeScore, awayScore),
+                predictedHomeScore = homeScore,
+                predictedAwayScore = awayScore
+            )
+        } else {
+            Bet(
+                matchId = bet.matchId,
+                prediction = Prediction.fromCode(code)
+            )
+        }
+
+        placeBet(newBet)
+
+        println("\nThe bet for match Id ${bet.matchId} is changed. Returning to the main menu...")
     }
 
     /** Drop all stored bets. */
