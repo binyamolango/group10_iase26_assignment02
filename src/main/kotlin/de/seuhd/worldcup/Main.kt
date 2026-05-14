@@ -6,13 +6,14 @@ fun main() {
 
     while (true) {
         printMenu()
-        when (Console.readInt("Choose an option (1 to 6): ", (1..6).toSet())) {
+        when (Console.readInt("Choose an option (1 to 7): ", (1..7).toSet())) {
             1 -> showStandings(data.groups)
             2 -> showMatches(data.groups, teamsById)
             3 -> placeBets(data.groups, teamsById)
             4 -> removeBets(data.groups)
-            5 -> showBettingScore(data.groups)
-            6 -> {
+            5 -> changeBets(data.groups)
+            6 -> showBettingScore(data.groups)
+            7 -> {
                 println("Bye!")
                 return
             }
@@ -27,8 +28,9 @@ private fun printMenu() {
     println("2) Show Matches")
     println("3) Place Bets")
     println("4) Remove Bets")
-    println("5) Show Betting Score")
-    println("6) Exit")
+    println("5) Change Bets")
+    println("6) Show Betting Score")
+    println("7) Exit")
     println("=================================================")
 }
 
@@ -138,6 +140,33 @@ private fun removeBets(allGroups: List<Group>) {
 
     val matchId = Console.readInt("Match ID: ")
     BettingService.removeBet(matchId)
+    Console.waitForEnter()
+}
+
+private fun changeBets(allGroups: List<Group>) {
+    println("\n From which group do you want to change the bet? Enter the group name (eg. Group A): ")
+    val group = chooseGroup(allGroups) ?: return
+    val matches = group.matches
+    var hasBet = false
+
+    for (match in matches) {
+        val bet = BettingService.showBet(match.matchId)
+        if (bet != null) {
+            println(bet)
+            hasBet = true
+        }
+    }
+
+    if (!hasBet) {
+        println("No bets found in ${group.name}!")
+        return
+    }
+
+    println("\n Which bet do you want to change from ${group.name}? Enter the matchId: ")
+
+    val matchId = Console.readInt("Match ID: ")
+    val bet = BettingService.showBet(matchId)
+    BettingService.changeBet(bet)
     Console.waitForEnter()
 }
 

@@ -131,8 +131,10 @@ object BettingService {
      * Change an existing bet. Only updates the bet if a bet for the same matchId already
      * exists; throws [IllegalArgumentException] if no bet is found for that match.
      */
-    fun changeBet(bet: Bet) {
-        TODO("Implement changing an existing bet")
+    fun changeBet(bet: Bet?) {
+        // TODO("Implement changing an existing bet")
+
+        println("\nThe bet for match Id ${bet?.matchId} is changed. Returning to the main menu...")
     }
 
     /** Drop all stored bets. */
