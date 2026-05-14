@@ -101,35 +101,30 @@ object BettingService {
                 }
             }
         }
-        println(totalBonus)
+        println("You have got a bonus point of $totalBonus")
         return totalBonus
     }
 
     // show all the bets in a specific group for the user to perform the removal
-    fun showBet(matches: List<Match>) {
-        for (match in matches) {
-            val bet = bets[match.matchId]
-            println(bet)
+    fun showBet(matchId: Int): Bet? {
+        if (bets != null) {
+            val bet = bets[matchId]
+            return bet
         }
+        return null
     }
     /**
      * Remove the bet for [matchId]. Does nothing if no bet exists for that match.
      */
     fun removeBet(matchId: Int) {
         // TODO("Implement removing a single bet by matchId")
-        /**
-         * xx add another option for the user to remove bet
-         * xx ask the user to enter group name from which the bet is removed
-         * xx list all of the bets placed in that group
-         * then ask the user to enter the matchId of the bet they want to remove
-         * then call the removeBet function to excute the removal
-         * mind edge cases
-         *
-         * the removal logic
-         * loop through the placed Bets
-         * if the matchId exist in the placed Bets remove that bet
-         * else do nothing
-         */
+        if (bets.containsKey(matchId)) {
+            cachedResult = null
+            bets.remove(matchId)
+            println("\nThe bet for matchId $matchId is removed. Returning to the main menu...")
+        } else {
+            println("\nThe bet for matchId $matchId is not found.")
+        }
     }
 
     /**
