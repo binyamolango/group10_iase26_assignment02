@@ -105,13 +105,10 @@ object BettingService {
         return totalBonus
     }
 
-    // show the bet in a specific group for the specific matchid so that the user can change or remove a bet
+    // return the bet in a specific group for the specific matchid so that the user can change or remove a bet
     fun showBet(matchId: Int): Bet? {
-        if (bets != null) {
-            val bet = bets[matchId]
-            return bet
-        }
-        return null
+        val bet = bets[matchId]
+        return bet
     }
     /**
      * Remove the bet for [matchId]. Does nothing if no bet exists for that match.
@@ -134,7 +131,7 @@ object BettingService {
     fun changeBet(bet: Bet) {
         // TODO("Implement changing an existing bet")
         println("You are about to change the bet for the selected match!")
-        val code = Console.readInt(
+        val code: Int = Console.readInt(
             "Your prediction (0 = Draw, 1 = Home win, 2 = Away win, 3 = Predict Home and Away Score): ",
             setOf(0, 1, 2, 3)
         )
