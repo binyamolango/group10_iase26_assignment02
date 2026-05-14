@@ -10,8 +10,9 @@ fun main() {
             1 -> showStandings(data.groups)
             2 -> showMatches(data.groups, teamsById)
             3 -> placeBets(data.groups, teamsById)
-            4 -> showBettingScore(data.groups)
-            5 -> {
+            4 -> removeBets(data.groups)
+            5 -> showBettingScore(data.groups)
+            6 -> {
                 println("Bye!")
                 return
             }
@@ -25,8 +26,9 @@ private fun printMenu() {
     println("1) Show Standings")
     println("2) Show Matches")
     println("3) Place Bets")
-    println("4) Show Betting Score")
-    println("5) Exit")
+    println("4) Remove Bets")
+    println("5) Show Betting Score")
+    println("6) Exit")
     println("=================================================")
 }
 
@@ -108,6 +110,17 @@ private fun placeBets(allGroups: List<Group>, teamsById: Map<String, Team>) {
         BettingService.placeBet(bet)
     }
     println("\nAll bets for ${group.name} stored.")
+    Console.waitForEnter()
+}
+
+private fun removeBets(allGroups: List<Group>) {
+    println("\n From which group do you want to remove the bet? Enter the group name (eg. Group A): ")
+
+    val group = chooseGroup(allGroups) ?: return
+    val matches = group.matches
+
+    BettingService.showBet(matches)
+
     Console.waitForEnter()
 }
 
