@@ -48,22 +48,81 @@ class BettingServiceTest {
 
         // assert
         assertEquals(3, result)
-
+        resetBets()
     }
 
     @Test
     fun `evaluateBonus awards 1 point for correct outcome without exact score`() {
         // TODO("implement test")
+
+        // arrange
+        val matches = listOf(
+            match(
+                id = 1,
+                home = "Germany",
+                away = "Brazil",
+                hs = 2,
+                aws = 1
+            )
+        )
+
+        val bet = Bet(1, Prediction.HOME_WIN)
+        BettingService.placeBet(bet)
+
+        // act
+        val result = BettingService.evaluateBonus(matches)
+
+        // assert
+        assertEquals(1, result)
+        resetBets()
     }
 
     @Test
     fun `evaluateBonus awards 0 points for a wrong prediction`() {
         // TODO("implement test")
+
+        // arrange
+        val matches = listOf(
+            match(
+                id = 1,
+                home = "Germany",
+                away = "Brazil",
+                hs = 2,
+                aws = 1
+            )
+        )
+
+        val bet = Bet(1, Prediction.DRAW)
+        BettingService.placeBet(bet)
+
+        // act
+        val result = BettingService.evaluateBonus(matches)
+
+        // assert
+        assertEquals(0, result)
+        resetBets()
     }
 
     @Test
     fun `evaluateBonus ignores unplayed matches`() {
         // TODO("implement test")
+
+        // arrange
+        val matches = listOf(
+            match(id = 1, home = "Germany", away = "Brazil", hs = null, aws = null),
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3)
+        )
+
+        val bet1 = Bet(1, Prediction.HOME_WIN)
+        val bet2 = Bet(2, Prediction.AWAY_WIN, 1, 3)
+        BettingService.placeBet(bet1)
+        BettingService.placeBet(bet2)
+
+        // act
+        val result = BettingService.evaluateBonus(matches)
+
+        // assert
+        assertEquals(3, result)
     }
 
     // ── removeBet ─────────────────────────────────────────────────────────────
