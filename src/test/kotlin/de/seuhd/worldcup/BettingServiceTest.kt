@@ -31,17 +31,43 @@ class BettingServiceTest {
 
         // arrange
         val matches = listOf(
-            match(
-                id = 1,
-                home = "Germany",
-                away = "Brazil",
-                hs = 2,
-                aws = 1
-            )
+            match(id = 1, home = "Germany", away = "Brazil", hs = 2, aws = 1),
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3),
+            match(id = 3, home = "Spain", away = "France", hs = 1, aws = 1)
         )
 
-        val bet = Bet(1, Prediction.HOME_WIN, 2, 1)
-        BettingService.placeBet(bet)
+        val bet1 = Bet(1, Prediction.HOME_WIN, 2, 1)
+        val bet2 = Bet(2, Prediction.AWAY_WIN, 1, 3)
+        val bet3 = Bet(3, Prediction.DRAW, 1, 1)
+        BettingService.placeBet(bet1)
+        BettingService.placeBet(bet2)
+        BettingService.placeBet(bet3)
+
+        // act
+        val result = BettingService.evaluateBonus(matches)
+
+        // assert
+        assertEquals(9, result)
+        resetBets()
+    }
+
+    @Test
+    fun `evaluateBonus awards 1 point for correct outcome without exact score`() {
+        // TODO("implement test")
+
+        // arrange
+        val matches = listOf(
+            match(id = 1, home = "Germany", away = "Brazil", hs = 2, aws = 1),
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3),
+            match(id = 3, home = "Spain", away = "France", hs = 1, aws = 1)
+        )
+
+        val bet1 = Bet(1, Prediction.HOME_WIN)
+        val bet2 = Bet(2, Prediction.AWAY_WIN)
+        val bet3 = Bet(3, Prediction.DRAW)
+        BettingService.placeBet(bet1)
+        BettingService.placeBet(bet2)
+        BettingService.placeBet(bet3)
 
         // act
         val result = BettingService.evaluateBonus(matches)
@@ -52,54 +78,28 @@ class BettingServiceTest {
     }
 
     @Test
-    fun `evaluateBonus awards 1 point for correct outcome without exact score`() {
+    fun `evaluateBonus awards 0 points for a wrong prediction`() {
         // TODO("implement test")
 
         // arrange
         val matches = listOf(
-            match(
-                id = 1,
-                home = "Germany",
-                away = "Brazil",
-                hs = 2,
-                aws = 1
-            )
+            match(id = 1, home = "Germany", away = "Brazil", hs = 2, aws = 1),
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3),
+            match(id = 3, home = "Spain", away = "France", hs = 1, aws = 1)
         )
 
-        val bet = Bet(1, Prediction.HOME_WIN)
-        BettingService.placeBet(bet)
+        val bet1 = Bet(1, Prediction.HOME_WIN) // right prediction (award 1 point)
+        val bet2 = Bet(2, Prediction.HOME_WIN, 3, 1) // wrong prediction
+        val bet3 = Bet(3, Prediction.AWAY_WIN) // wrong prediction (award 0 point)
+        BettingService.placeBet(bet1)
+        BettingService.placeBet(bet2)
+        BettingService.placeBet(bet3)
 
         // act
         val result = BettingService.evaluateBonus(matches)
 
         // assert
         assertEquals(1, result)
-        resetBets()
-    }
-
-    @Test
-    fun `evaluateBonus awards 0 points for a wrong prediction`() {
-        // TODO("implement test")
-
-        // arrange
-        val matches = listOf(
-            match(
-                id = 1,
-                home = "Germany",
-                away = "Brazil",
-                hs = 2,
-                aws = 1
-            )
-        )
-
-        val bet = Bet(1, Prediction.DRAW)
-        BettingService.placeBet(bet)
-
-        // act
-        val result = BettingService.evaluateBonus(matches)
-
-        // assert
-        assertEquals(0, result)
         resetBets()
     }
 
@@ -123,6 +123,7 @@ class BettingServiceTest {
 
         // assert
         assertEquals(3, result)
+        resetBets()
     }
 
     // ── removeBet ─────────────────────────────────────────────────────────────
@@ -130,11 +131,47 @@ class BettingServiceTest {
     @Test
     fun `removeBet removes an existing bet so it no longer affects evaluation`() {
         // TODO("implement test")
+
+        // arrange
+        // matchID
+        // check for evaluation
+        val matchId = 1
+        val matches = listOf(
+            match(id = 1, home = "Germany", away = "Brazil", hs = 2, aws = 1),
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3),
+            match(id = 3, home = "Spain", away = "France", hs = 1, aws = 1)
+        )
+        val bet1 = Bet(1, Prediction.HOME_WIN, 2, 1)
+        val bet2 = Bet(2, Prediction.AWAY_WIN, 1, 3)
+        val bet3 = Bet(3, Prediction.DRAW, 1, 1)
+        BettingService.placeBet(bet1)
+        BettingService.placeBet(bet2)
+        BettingService.placeBet(bet3)
+
+        // act
+        BettingService.removeBet(matchId)
+        val bonusPoint = BettingService.evaluateBonus(matches)
+
+        // assert
+        assertEquals(6, bonusPoint) // bonusPoint should have been 9 if the bet hasn't been removed
+        resetBets()
     }
 
     @Test
     fun `removeBet does nothing when no bet exists for that matchId`() {
         // TODO("implement test")
+
+        // arrange
+        val matchId = 1
+        val removeMatchId = 37
+        val bet = Bet(matchId = 1, prediction = Prediction.HOME_WIN)
+        BettingService.placeBet(bet)
+
+        // act
+        BettingService.removeBet(removeMatchId)
+
+        // assert
+        assertEquals(bet, BettingService.showBet(matchId))
     }
 
     // ── changeBet ─────────────────────────────────────────────────────────────
