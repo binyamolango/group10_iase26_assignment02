@@ -130,12 +130,16 @@ object BettingService {
      */
     fun changeBet(bet: Bet) {
         // TODO("Implement changing an existing bet")
+        if (!bets.containsKey(bet.matchId)) {
+            throw IllegalArgumentException("No bet found for match Id ${bet.matchId}!")
+        }
+
         println("You are about to change the bet for the selected match!")
         val code: Int = Console.readInt(
             "Your prediction (0 = Draw, 1 = Home win, 2 = Away win, 3 = Predict Home and Away Score): ",
             setOf(0, 1, 2, 3)
         )
-        val newBet = if (code == 3) {
+        val changedBet = if (code == 3) {
             val homeScore = Console.readInt("Predict Home Score: ")
             val awayScore = Console.readInt("Predict Away Score: ")
 
@@ -152,7 +156,7 @@ object BettingService {
             )
         }
 
-        placeBet(newBet)
+        placeBet(changedBet)
 
         println("\nThe bet for match Id ${bet.matchId} is changed. Returning to the main menu...")
     }
