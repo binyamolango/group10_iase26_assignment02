@@ -27,7 +27,7 @@ class BettingServiceTest {
         BettingService.clear()
     }
 
-    fun captureOutput(block: () -> Unit): String {
+    private fun captureOutput(block: () -> Unit): String {
         val output = ByteArrayOutputStream()
         val originalOut = System.out
 
@@ -141,19 +141,28 @@ class BettingServiceTest {
         // arrange
         val matches = listOf(
             match(id = 1, home = "Germany", away = "Brazil", hs = null, aws = null),
-            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3)
+            match(id = 2, home = "Portugal", away = "Argentina", hs = 1, aws = 3),
+            match(id = 3, home = "France", away = "Spain", hs = 1, aws = null)
+
         )
 
         val bet1 = Bet(1, Prediction.HOME_WIN)
         val bet2 = Bet(2, Prediction.AWAY_WIN, 1, 3)
+        val bet3 = Bet(3, Prediction.DRAW)
+        val bonusPoint = 3
         BettingService.placeBet(bet1)
         BettingService.placeBet(bet2)
+        BettingService.placeBet(bet3)
 
         // act
         val result = BettingService.evaluateBonus(matches)
+        val result2 = BettingService.evaluate(matches)
 
         // assert
-        assertEquals(3, result)
+        assertEquals(bonusPoint, result)
+        assertEquals(1, result2.correct)
+        assertEquals(1, result2.evaluated)
+        assertEquals(0, result2.incorrect)
 
         resetBets()
     }
@@ -208,6 +217,7 @@ class BettingServiceTest {
         // assert
         assertEquals(bet, BettingService.showBet(matchId)) // to check the bet is the same (not removed)
         assertEquals(expectedErrorMsg, actualErrorMsg)
+
         resetBets()
     }
 
@@ -224,7 +234,7 @@ class BettingServiceTest {
         BettingService.placeBet(bet2)
 
         // act
-        withInput("2\n") {
+        withInput("2") {
             BettingService.changeBet(bet1)
         }
 
