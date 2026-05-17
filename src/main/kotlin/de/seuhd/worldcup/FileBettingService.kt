@@ -9,6 +9,8 @@ import java.io.File
  */
 class FileBettingService(private val file: File) {
 
+    // Fix: synchronized so only one thread can do the read-update-write cycle at a time
+    @Synchronized
     fun placeBet(bet: Bet) {
         val bets = readBets()
         bets[bet.matchId] = bet

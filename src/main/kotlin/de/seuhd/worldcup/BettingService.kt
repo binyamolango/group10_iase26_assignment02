@@ -163,6 +163,8 @@ object BettingService {
 
     /** Drop all stored bets. */
     fun clear() {
+        // Fix: also reset cachedResult so stale evaluation does not leak into the next test
         bets.clear()
+        cachedResult = null
     }
 }
